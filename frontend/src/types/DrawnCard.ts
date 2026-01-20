@@ -1,4 +1,4 @@
-export type Orientation = "upright" | "reversed"; // Adjust based on your actual Orientation enum values
+export type Orientation = "upright" | "reversed";
 
 export type DrawnCard = {
     name: string;

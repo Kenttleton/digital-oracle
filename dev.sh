@@ -2,7 +2,7 @@
 
 # Development script for running frontend and backend separately
 
-echo "🔮 Starting Tarot App in Development Mode..."
+echo "🔮 Starting Digital Oracle in Development Mode..."
 echo ""
 
 # Check if we're in the right directory

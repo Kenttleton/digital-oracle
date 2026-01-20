@@ -1,7 +1,7 @@
 services:
   db:
     image: mysql:8.0
-    container_name: tarot_mysql
+    container_name: mysql
     restart: unless-stopped
     environment:
       MYSQL_DATABASE: tarot_db
@@ -21,7 +21,7 @@ services:
 
   ollama:
     image: ollama/ollama:latest
-    container_name: tarot_ollama
+    container_name: ollama
     restart: unless-stopped
     volumes:
       - ollama_data:/root/.ollama
@@ -37,11 +37,11 @@ services:
     #           count: all
     #           capabilities: [gpu]
 
-  api:
+  app:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: tarot_api
+    container_name: digital_oracle
     restart: unless-stopped
     ports:
       - "8000:8000"
@@ -53,7 +53,7 @@ services:
       DB_NAME: tarot_db
       OLLAMA_URL: http://ollama:11434
     volumes:
-      - api_data:/app
+      - app_data:/app
     depends_on:
       db:
         condition: service_healthy
@@ -63,4 +63,4 @@ services:
 volumes:
   mysql_data:
   ollama_data:
-  api_data:
+  app_data:

@@ -24,7 +24,7 @@ OLLAMA_URL = os.getenv(
     "OLLAMA_URL",
     "http://localhost:11434",
 )
-MODEL = "gemma3n:e4b"
+MODEL = "gemma:e2b"
 
 SYSTEM_PROMPT = """You are a wise and mystical tarot reader with decades of experience interpreting the cards. You speak with warmth, insight, and a touch of mystery. Your readings blend traditional tarot symbolism with intuitive guidance, helping seekers find clarity and direction in their lives.
 

@@ -1,21 +1,17 @@
 #!/bin/bash
 
-echo "🔮 Setting up Tarot Reading App..."
+echo "🔮 Setting up Digital Oracle..."
 
 # Start all services
 echo "Starting Docker containers..."
 docker-compose up -d
 
-# Wait for Ollama to be ready
-echo "Waiting for Ollama to start..."
-sleep 10
-
-# Pull the LLM model
-echo "Pulling llama3.2 model (this may take a while)..."
-docker exec tarot_ollama ollama pull llama3.2
-
 echo ""
 echo "✨ Setup complete!"
+echo ""
+echo "Ollama model is being downloaded in the background. This may take some time depending on your internet speed."
+echo "You can monitor the download progress by checking the logs:"
+echo "  docker-compose logs -f ollama"
 echo ""
 echo "Your services are running:"
 echo "  - API: http://localhost:8000"

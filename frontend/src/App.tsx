@@ -3,7 +3,6 @@ import { Sparkles, Moon, Stars } from "lucide-react";
 import { CapitalizeFirstLetter } from "./Utils";
 import { DrawnCard } from "./types/DrawnCard";
 import { Spread, SPREADS, SpreadType } from "./types/Spreads";
-import {ImagePreloader, ImageURLs} from "./ImagePreloader";
 
 interface DrawResponse {
   cards: DrawnCard[];
