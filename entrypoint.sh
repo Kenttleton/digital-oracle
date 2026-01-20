@@ -11,9 +11,12 @@ sleep 5
 echo "🔴 Pulling models..."
 
 # Pull the desired model
-ollama pull gemma:2b
-ollama pull gemma3n:e2b 
-ollama pull gemma3n:e4b
+# ollama pull gemma:2b
+# ollama pull gemma:7b
+ollama pull gemma2:2b
+# ollama pull gemma2:9b
+# ollama pull gemma3n:e2b 
+# ollama pull gemma3n:e4b
 
 echo "🟢 Done!"
 

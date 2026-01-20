@@ -51,7 +51,7 @@ This will:
 - Seed the database with tarot card data
 - Build the React frontend
 - Start Ollama LLM service
-- Pull the default model (gemma:2b)
+- Pull the default model (gemma2:2b)
 - Build and start the FastAPI backend
 
 1. **Access the app:**
@@ -71,7 +71,7 @@ cd frontend && npm install && cd ..
 docker-compose up db ollama -d
 
 # Pull the model
-docker exec ollama ollama pull gemma:2b
+docker exec ollama ollama pull gemma2:2b
 
 # Run dev servers (backend + frontend with hot reload)
 chmod +x dev.sh
@@ -123,7 +123,7 @@ OLLAMA_HOST: http://ollama:11434
 
 ### Using Different Models
 
-The default model is `gemma:2b` (lightweight, Docker-friendly). To use a different model:
+The default model is `gemma2:2b` (lightweight, Docker-friendly). To use a different model:
 
 1. **Pull the model:**
 
@@ -134,12 +134,12 @@ docker exec ollama ollama pull phi3
 1. **Update `llm.py`:**
 
 ```python
-model: str = "phi3"  # Change from gemma:2b
+model: str = "phi3"  # Change from gemma2:2b
 ```
 
 **Recommended lightweight models:**
 
-- `gemma:2b` - Best overall for Docker (1.5GB)
+- `gemma2:2b` - Best overall for Docker (1.5GB)
 - `phi3` - Better reasoning, slightly larger (2.3GB)
 - `tinyllama` - Fastest/smallest (637MB)
 
@@ -277,7 +277,7 @@ docker exec -it mysql mysql -u tarot_user -p
 
 **Out of memory:**
 
-- Use a smaller model like `gemma:2b` or `tinyllama`
+- Use a smaller model like `gemma2:2b` or `tinyllama`
 - Increase Docker memory limit in Docker Desktop
 
 **Database connection issues:**

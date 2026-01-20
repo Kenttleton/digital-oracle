@@ -1,6 +1,6 @@
 from console import console 
 import os
-import requests
+import httpx
 import json
 from typing import AsyncGenerator, List
 from models import DrawnCard, SymbolismDepth
@@ -24,7 +24,10 @@ OLLAMA_URL = os.getenv(
     "OLLAMA_URL",
     "http://localhost:11434",
 )
-MODEL = "gemma:2b"
+MODEL = os.getenv(
+    "OLLAMA_MODEL",
+    "gemma2:2b",
+)
 
 SYSTEM_PROMPT = """You are a wise and mystical tarot reader with decades of experience interpreting the cards. You speak with warmth, insight, and a touch of mystery. Your readings blend traditional tarot symbolism with intuitive guidance, helping seekers find clarity and direction in their lives.
 
@@ -88,13 +91,29 @@ async def interpret_reading(
     console.info(f"LLM JSON: {data}")
     response = []
     try:
-        with requests.post(OLLAMA_URL + "/api/generate", json=data, stream=True) as res:
-            res.raise_for_status()
-            for chunk in res.iter_lines():
-                if chunk:
-                    json_chunk = json.loads(chunk.decode('utf-8'))
-                    response.append(json_chunk)
-                    yield json_chunk.get('response', '')
+        async with httpx.AsyncClient() as client:
+            async with client.stream(
+                "POST",
+                f"{OLLAMA_URL}/api/generate",
+                json=data,
+            ) as res:
+                response.raise_for_status()
+                async for line in res.aiter_lines():
+                    if line:
+                        try:
+                            json_chunk = json.loads(line)
+                            text = json_chunk.get('response', '')
+                            if text:
+                                yield text
+                        except json.JSONDecodeError:
+                            console.error(f"Failed to decode JSON chunk: {line}")
+                            continue
+                        
+    except httpx.HTTPError as e:
+        console.error(f"HTTP error: {e}")
+        yield (
+            "The cards suggest a moment of reflection. Consider how their symbols resonate with your current path."
+        )
 
     except Exception as e:
         console.error(f"LLM error: {e}")
