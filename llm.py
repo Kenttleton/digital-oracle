@@ -89,35 +89,69 @@ async def interpret_reading(
         "stream": True,
     }
     console.info(f"LLM JSON: {data}")
-    response = []
+
     try:
-        async with httpx.AsyncClient() as client:
+        async with httpx.AsyncClient(timeout=160.0) as client:
             async with client.stream(
                 "POST",
                 f"{OLLAMA_URL}/api/generate",
                 json=data,
-            ) as res:
-                response.raise_for_status()
-                async for line in res.aiter_lines():
+            ) as response:
+                if response.status_code != 200:
+                    error_text = await response.aread()
+                    console.error(f"Ollama API error (status {response.status_code}): {error_text.decode()}")
+                    raise httpx.HTTPStatusError(
+                        f"Ollama returned status {response.status_code}",
+                        request=response.request,
+                        response=response
+                    )
+                async for line in response.aiter_lines():
                     if line:
                         try:
                             json_chunk = json.loads(line)
+
+                            # Check for errors in the response
+                            if 'error' in json_chunk:
+                                console.error(f"Ollama error in stream: {json_chunk['error']}")
+                                raise Exception(f"Ollama error: {json_chunk['error']}")
+                            
                             text = json_chunk.get('response', '')
                             if text:
                                 yield text
+                                
+                            # Check if stream is done
+                            if json_chunk.get('done', False):
+                                console.info("Stream completed successfully")
+                                break
+
                         except json.JSONDecodeError:
                             console.error(f"Failed to decode JSON chunk: {line}")
                             continue
-                        
-    except httpx.HTTPError as e:
-        console.error(f"HTTP error: {e}")
+
+    except httpx.TimeoutException as e:
+        console.error(f"Timeout error - Ollama took too long to respond: {str(e)}")
         yield (
             "The cards suggest a moment of reflection. Consider how their symbols resonate with your current path."
         )
-
+    except httpx.HTTPStatusError as e:
+        console.error(f"HTTP status error: {e.response.status_code} - {str(e)}")
+        yield (
+            "The cards suggest a moment of reflection. Consider how their symbols resonate with your current path."
+        )
+    except httpx.RequestError as e:
+        console.error(f"Request error - Could not connect to Ollama: {type(e).__name__}: {str(e)}")
+        yield (
+            "The cards suggest a moment of reflection. Consider how their symbols resonate with your current path."
+        )
     except Exception as e:
-        console.error(f"LLM error: {e}")
-        # "The cards are quiet, but reflection may still reveal their meaning.",
+        console.error(f"Unexpected LLM error - {type(e).__name__}: {str(e)}")
+        import traceback
+        console.error(f"Traceback: {traceback.format_exc()}")
+        yield (
+            "The cards suggest a moment of reflection. Consider how their symbols resonate with your current path."
+        )
+    except httpx.HTTPError as e:
+        console.error(f"HTTP error: {e}")
         yield (
             "The cards suggest a moment of reflection. Consider how their symbols resonate with your current path."
         )

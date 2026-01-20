@@ -46,7 +46,7 @@ async def interpret_cards(req: InterpretRequest):
     if not cards:
         raise HTTPException(400, "Invalid cards for the spread")
 
-    return StreamingResponse(interpret_reading(req.question, cards, req.spread, req.depth), media_type="text/stream-event")
+    return StreamingResponse(interpret_reading(req.question, cards, req.spread, req.depth), media_type="text/event-stream")
 
 @app.get("/api/health")
 async def health():

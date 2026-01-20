@@ -260,7 +260,6 @@ docker exec -it mysql mysql -u tarot_user -p
 
 ## 🎯 Roadmap
 
-- [ ] Optimize CPU usage during image rendering (might be hardware dependent)
 - [ ] Fine-tune LLM prompts for better "feel"
 - [ ] Support complex spreads (Celtic Cross, Tree of Life, Chakra, etc)
 - [ ] User authentication for public deployment
